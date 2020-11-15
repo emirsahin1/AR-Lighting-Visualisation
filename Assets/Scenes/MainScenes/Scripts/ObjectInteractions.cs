@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ObjectInteractions : MonoBehaviour
 {
@@ -63,7 +64,7 @@ public class ObjectInteractions : MonoBehaviour
 
     public void Rotate()
     {
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 1 && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
         {
             Touch touch = Input.GetTouch(0);
                         

@@ -13,6 +13,7 @@ public class ObjectPlacer : MonoBehaviour
     private GameObject placedARObject;
     private ARRaycastManager aRRaycastManager;
     private ARPlaneManager aRPlaneManager;
+    [SerializeField] private LightController lightController;
     private bool isObjectPlaced = false;
     private Vector3 objectScale;
     private ModelInit modelInit;
@@ -33,10 +34,10 @@ public class ObjectPlacer : MonoBehaviour
         aRRaycastManager = GetComponent<ARRaycastManager>();
         objectScale = new Vector3(prefabScale, prefabScale, prefabScale);
         aRPlaneManager = GetComponent<ARPlaneManager>();
+        modelInit = FindObjectOfType<ModelInit>();
     }
     private void Start()
     {
-        modelInit = FindObjectOfType<ModelInit>();
         objectToPlace = modelInit.arModelToPlace;
     }
     /**
@@ -60,6 +61,12 @@ public class ObjectPlacer : MonoBehaviour
         aRPlaneManager.SetTrackablesActive(false);
 
         aRPlaneManager.enabled = false;
+
+        if (lightController != null)
+        {
+            lightController.turnOnController();
+        }
+
     }
 
     public void activatePlanes()
@@ -68,6 +75,10 @@ public class ObjectPlacer : MonoBehaviour
         aRPlaneManager.enabled = true;
         isObjectPlaced = false;
         Destroy(placedARObject);
+        if (lightController != null)
+        {
+            lightController.turnOffController();
+        }
     }
 
     void Update()
@@ -109,6 +120,11 @@ public class ObjectPlacer : MonoBehaviour
             deactivatePlanes();
 
             gameObject.GetComponent<ObjectInteractions>().arObject = placedPrefab;
+
+            if (lightController != null)
+            {
+                lightController.gameObject.SetActive(true);
+            }
         }
     }
 }

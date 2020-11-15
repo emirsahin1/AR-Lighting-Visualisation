@@ -5,7 +5,10 @@ using UnityEngine;
 public class ModelInit : MonoBehaviour
 {
     public static GameObject modelInit;
-    public GameObject arModelToPlace;
+    private GameObject _arModelToPlace;
+    public GameObject arModelToPlace { get { return _arModelToPlace; } set { _arModelToPlace = value; } }
+
+    //Interactive means that lights can be moved.
 
     void Awake()
     {

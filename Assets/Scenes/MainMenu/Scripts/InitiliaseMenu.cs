@@ -10,6 +10,7 @@ public class InitiliaseMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 300;
         menuLoader = GameObject.Find("MenuLoader");
         menuLoaderScript = menuLoader.GetComponent<MenuLoader>();
         Debug.Log("getting MENULOADER");
