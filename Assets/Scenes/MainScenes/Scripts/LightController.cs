@@ -6,11 +6,14 @@ using TMPro;
 
 public class LightController : MonoBehaviour
 {
-    private Light[] lights;
+    public Text debugger;
+
+    private InteractiveLight[] lights;
     [SerializeField] private TMP_Text closeButtonText;
     private Dropdown dropDown;
     private Slider redSlider, greenSlider, blueSlider, intensitySlider, rotateXSlider, rotateYSlider;
     private int activeLightIndex;
+    private InteractiveLight activeLight;
     private const string optionString = "Light ";
     private bool callOnValueChanged = true;
     // Start is called before the first frame update
@@ -23,7 +26,7 @@ public class LightController : MonoBehaviour
         rotateXSlider = GameObject.Find("RotationXSlider").GetComponent<Slider>();
         rotateYSlider = GameObject.Find("RotationYSlider").GetComponent<Slider>();
 
-        lights = FindObjectsOfType<Light>();
+        lights = FindObjectsOfType<InteractiveLight>();
         dropDown = GetComponentInChildren<Dropdown>(true);
 
         initDropDown(lights);
@@ -32,24 +35,24 @@ public class LightController : MonoBehaviour
 
 
     //Initiliases the dropdown according to the number of lights.
-    private void initDropDown(Light[] lights)
+    private void initDropDown(InteractiveLight[] lights)
     {
+        activeLight = lights[0];
         List<string> options = new List<string>();
 
         for (int i = 0; i < lights.Length; i++) {
             options.Add(optionString + (i + 1));
             //lights[i].GetComponentInParent<TMP_Text>().SetText("Light " + i);
-            lights[i].transform.parent.GetComponentInChildren<TMP_Text>().SetText("Light " + (i + 1));
+            lights[i].title.SetText("Light " + (i + 1));
         }
         dropDown.ClearOptions();
         dropDown.AddOptions(options);
-
     }
 
     //Sets the lights index to be controlled
     public void setActiveLight(int val)
     {
-        activeLightIndex = val;
+        activeLight = lights[val];
         initSliderValues();
     }
 
@@ -57,25 +60,23 @@ public class LightController : MonoBehaviour
     {
         if (callOnValueChanged)
         {
-            lights[activeLightIndex].color = new Color(redSlider.value, greenSlider.value, blueSlider.value);
-            lights[activeLightIndex].transform.parent.gameObject.GetComponent<Renderer>().material.SetColor("_BaseColor", lights[activeLightIndex].color);
+            activeLight.lightComp.color = new Color(redSlider.value, greenSlider.value, blueSlider.value);
+            activeLight.lightBulb.GetComponent<Renderer>().material.SetColor("_BaseColor", activeLight.lightComp.color);
         }
     }
     public void updateLightIntensity()
     {
         if (callOnValueChanged)
         {
-            lights[activeLightIndex].intensity = intensitySlider.value;
+            activeLight.lightComp.intensity = intensitySlider.value;
         }
     }
     public void updateLightRotation()
     {
         if (callOnValueChanged)
         {
-            //Vector3 lightRotation = lights[activeLightIndex].transform.rotation.eulerAngles;
-            lights[activeLightIndex].transform.parent.parent.localRotation = Quaternion.Euler(rotateYSlider.value, rotateXSlider.value, 1f);
-            //lights[activeLightIndex].transform.parent.parent.RotateAround(new Vector3(0,0,0),Vector3.up, rotateYSlider.value);
-            //lights[activeLightIndex].transform.parent.parent.RotateAround(new Vector3(0,0,0), Vector3.right, rotateXSlider.value);
+            activeLight.gameObject.transform.localRotation = Quaternion.Euler(rotateYSlider.value, rotateXSlider.value, 0f);
+            debugger.text = activeLight.gameObject.transform.eulerAngles.y.ToString();
         }
     }
 
@@ -83,15 +84,17 @@ public class LightController : MonoBehaviour
     {
         callOnValueChanged = false;
 
-        redSlider.value = lights[activeLightIndex].color.r;
-        greenSlider.value = lights[activeLightIndex].color.g;
-        blueSlider.value = lights[activeLightIndex].color.b;
-        intensitySlider.value = lights[activeLightIndex].intensity;
+        redSlider.value = activeLight.lightComp.color.r;
+        greenSlider.value = activeLight.lightComp.color.g;
+        blueSlider.value = activeLight.lightComp.color.b;
+        rotateXSlider.value = activeLight.gameObject.transform.localEulerAngles.y;
+        rotateYSlider.value = activeLight.gameObject.transform.localEulerAngles.x;
+        intensitySlider.value = activeLight.lightComp.intensity;
 
         for (int i = 0; i < lights.Length; i++)
         {
             //lights[i].transform.parent.gameObject.GetComponent<Renderer>().material = Instantiate(Resources.Load("Material") as Material);
-            lights[i].transform.parent.gameObject.GetComponent<Renderer>().material.SetColor("_BaseColor", lights[i].color);
+            lights[i].lightBulb.GetComponent<Renderer>().material.SetColor("_BaseColor", lights[i].lightComp.color);
         }
 
         callOnValueChanged = true;
