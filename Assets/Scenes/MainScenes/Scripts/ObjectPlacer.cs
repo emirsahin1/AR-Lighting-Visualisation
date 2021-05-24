@@ -74,7 +74,7 @@ public class ObjectPlacer : MonoBehaviour
         aRPlaneManager.SetTrackablesActive(true);
         aRPlaneManager.enabled = true;
         isObjectPlaced = false;
-        Destroy(placedARObject);
+        Destroy(placedPrefab);
         if (lightController != null)
         {
             lightController.turnOffController();
@@ -124,6 +124,7 @@ public class ObjectPlacer : MonoBehaviour
             if (lightController != null)
             {
                 lightController.gameObject.SetActive(true);
+                lightController.arObject = placedPrefab;
             }
         }
     }

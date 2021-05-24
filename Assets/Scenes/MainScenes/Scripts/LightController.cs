@@ -10,6 +10,12 @@ public class LightController : MonoBehaviour
 
     private InteractiveLight[] lights;
     [SerializeField] private TMP_Text closeButtonText;
+    private GameObject _arObject;
+    public GameObject arObject
+    {
+        get { return _arObject; }
+        set { _arObject = value; }
+    }
     private Dropdown dropDown;
     private Slider redSlider, greenSlider, blueSlider, intensitySlider, rotateXSlider, rotateYSlider;
     private int activeLightIndex;
@@ -25,14 +31,12 @@ public class LightController : MonoBehaviour
         intensitySlider = GameObject.Find("IntensitySlider").GetComponent<Slider>();
         rotateXSlider = GameObject.Find("RotationXSlider").GetComponent<Slider>();
         rotateYSlider = GameObject.Find("RotationYSlider").GetComponent<Slider>();
-
         lights = FindObjectsOfType<InteractiveLight>();
         dropDown = GetComponentInChildren<Dropdown>(true);
 
         initDropDown(lights);
         initSliderValues();
     }
-
 
     //Initiliases the dropdown according to the number of lights.
     private void initDropDown(InteractiveLight[] lights)
@@ -75,7 +79,24 @@ public class LightController : MonoBehaviour
     {
         if (callOnValueChanged)
         {
-            activeLight.gameObject.transform.localRotation = Quaternion.Euler(rotateYSlider.value, rotateXSlider.value, 0f);
+            activeLight.gameObject.transform.localRotation = Quaternion.Euler(-rotateYSlider.value, rotateXSlider.value, 0f);
+            debugger.text = activeLight.gameObject.transform.eulerAngles.y.ToString();
+        }
+    }
+
+    public void updateLightDistancePos()
+    {
+        if (callOnValueChanged)
+        {
+            activeLight.lightBulb.transform.position = Vector3.MoveTowards(activeLight.lightBulb.transform.position, arObject.gameObject.transform.position, 0.06f);
+            debugger.text = activeLight.gameObject.transform.eulerAngles.y.ToString();
+        }
+    }
+    public void updateLightDistanceNeg()
+    {
+        if (callOnValueChanged)
+        {
+            activeLight.lightBulb.transform.position = Vector3.MoveTowards(activeLight.lightBulb.transform.position, arObject.gameObject.transform.position, -0.06f);
             debugger.text = activeLight.gameObject.transform.eulerAngles.y.ToString();
         }
     }
@@ -90,7 +111,6 @@ public class LightController : MonoBehaviour
         rotateXSlider.value = activeLight.gameObject.transform.localEulerAngles.y;
         rotateYSlider.value = activeLight.gameObject.transform.localEulerAngles.x;
         intensitySlider.value = activeLight.lightComp.intensity;
-
         for (int i = 0; i < lights.Length; i++)
         {
             //lights[i].transform.parent.gameObject.GetComponent<Renderer>().material = Instantiate(Resources.Load("Material") as Material);
@@ -117,6 +137,11 @@ public class LightController : MonoBehaviour
     {
         gameObject.SetActive(false);
         closeButtonText.text = "Open Menu";
+        foreach(InteractiveLight light in lights)
+        {
+            light.lightBulb.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            light.title.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        }
 
     }
 
@@ -124,6 +149,10 @@ public class LightController : MonoBehaviour
     {
         gameObject.SetActive(true);
         closeButtonText.text = "Close Menu";
-
+        foreach (InteractiveLight light in lights)
+        {
+            light.lightBulb.gameObject.GetComponent<MeshRenderer>().enabled = true;
+            light.title.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        }
     }
 }

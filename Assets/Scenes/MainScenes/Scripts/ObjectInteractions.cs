@@ -12,14 +12,12 @@ public class ObjectInteractions : MonoBehaviour
         get { return _arObject; }
         set { _arObject = value; }
     }
-    private ObjectPlacer objectPlacer;
     public SceneSwitcher sceneSwitcher;
     private float rotationSpeed = 0.18f;
     private float minimumScale = 0.02f;
 
     private void Start()
     {
-        objectPlacer = GetComponent<ObjectPlacer>();
     }
     
     void Update()
