@@ -14,4 +14,6 @@ Light Visualisation AR application. Made using ARCore framework and Unity in C#.
 - Pre-lit model viewing
 - Support for both IOS and Android devices
 
+
+![Image 1](./Readme_Images/Screenshot_20211020-141731_Museum of Lighting.jpg?raw=true)
   
